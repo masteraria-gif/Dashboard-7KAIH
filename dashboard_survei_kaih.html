@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Survei KAIH - Minecraft Soft UI</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js untuk Diagram Interaktif -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Google Fonts: Press Start 2P & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    .font-mc-title {
+      font-family: 'Press Start 2P', monospace;
+      letter-spacing: 0.04em;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #2e3136;
+      color: #f4f4f5;
+      background-image: 
+        linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.08) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.08) 75%);
+      background-size: 32px 32px;
+      background-position: 0 0, 0 16px, 16px -16px, -16px 0;
+    }
+
+    /* Border Bevel Minecraft Slot Abu-abu Lembut */
+    .mc-slot-card {
+      background-color: #d4d4d8;
+      border: 4px solid;
+      border-top-color: #f4f4f5;
+      border-left-color: #f4f4f5;
+      border-bottom-color: #71717a;
+      border-right-color: #71717a;
+      box-shadow: 4px 4px 0px rgba(24, 24, 27, 0.35);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+    .mc-slot-card:hover {
+      transform: translateY(-4px);
+    }
+
+    /* Border Inset untuk Kotak Nilai / Pencarian */
+    .mc-inset-box {
+      background-color: #e4e4e7;
+      border: 3px solid;
+      border-top-color: #71717a;
+      border-left-color: #71717a;
+      border-bottom-color: #f4f4f5;
+      border-right-color: #f4f4f5;
+    }
+
+    /* Border Perkamen Lembut untuk Area Diagram & Modal */
+    .mc-parchment-panel {
+      background-color: #f3efe6;
+      border: 5px solid;
+      border-top-color: #faf8f5;
+      border-left-color: #faf8f5;
+      border-bottom-color: #9c9588;
+      border-right-color: #9c9588;
+      box-shadow: 6px 6px 0px rgba(24, 24, 27, 0.4);
+    }
+
+    /* Tombol Minecraft Bevel Soft */
+    .mc-btn {
+      border: 3px solid;
+      border-top-color: #f4f4f5;
+      border-left-color: #f4f4f5;
+      border-bottom-color: #52525b;
+      border-right-color: #52525b;
+      transition: transform 0.1s ease, filter 0.15s ease;
+    }
+    .mc-btn:active {
+      transform: translateY(2px);
+      border-top-color: #52525b;
+      border-left-color: #52525b;
+      border-bottom-color: #f4f4f5;
+      border-right-color: #f4f4f5;
+    }
+
+    /* Animasi Jatuh Halus saat Load */
+    @keyframes blockDrop {
+      0% { opacity: 0; transform: translateY(-16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-drop {
+      animation: blockDrop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 sm:p-6 md:p-8 selection:bg-[#52b788] selection:text-[#18181b]">
+
+  <div class="max-w-7xl mx-auto space-y-7">
+    
+    <!-- ====================================================================
+         1. HEADER: GRASS BLOCK PASTEL / SAGE EDITION
+         ==================================================================== -->
+    <header class="relative overflow-hidden border-4 border-[#463628] shadow-[6px_6px_0px_rgba(24,24,27,0.45)] animate-drop">
+      <!-- Lapisan Rumput Hijau Lumut Lembut (#5a824f) -->
+      <div class="bg-[#5a824f] border-b-4 border-[#46683d] px-5 py-3 flex flex-wrap items-center justify-between gap-2 relative">
+        <div class="flex items-center gap-2.5">
+          <span class="w-3 h-3 bg-[#a3c998] border border-[#3a5732] inline-block"></span>
+          <span class="font-mc-title text-[10px] sm:text-xs text-[#f3f7f2] drop-shadow-[1px_1px_0px_#2d4427]">
+            SURVEI KARAKTER SISWA // 7 KAIH
+          </span>
+        </div>
+        <div class="bg-[#46683d] px-3 py-1 border-2 border-[#36522f] text-xs font-semibold text-[#e6f0e3] flex items-center gap-1.5">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-[#cbe0c5]"></i>
+          <span>Periode: 30 Okt – 09 Nov 2026</span>
+        </div>
+
+        <!-- Efek Piksel Rumput Menjuntai Halus -->
+        <div class="hidden sm:block absolute -bottom-2.5 left-10 w-4 h-2.5 bg-[#5a824f] border-b-2 border-x-2 border-[#46683d]"></div>
+        <div class="hidden sm:block absolute -bottom-3 left-28 w-5 h-3 bg-[#5a824f] border-b-2 border-x-2 border-[#46683d]"></div>
+        <div class="hidden md:block absolute -bottom-2.5 right-24 w-4 h-2.5 bg-[#5a824f] border-b-2 border-x-2 border-[#46683d]"></div>
+      </div>
+
+      <!-- Lapisan Tanah Hangat Lembut (#7a5c43) -->
+      <div class="bg-[#7a5c43] p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+        <div class="flex items-center gap-4">
+          <div class="mc-slot-card p-3.5 shrink-0 flex items-center justify-center hover:transform-none">
+            <i data-lucide="pickaxe" class="w-8 h-8 text-[#27272a]"></i>
+          </div>
+          <div>
+            <h1 class="font-mc-title text-base sm:text-xl md:text-2xl text-[#faf6f0] leading-relaxed drop-shadow-[2px_2px_0px_#4a3728]">
+              DASHBOARD 7 KEBIASAAN ANAK INDONESIA HEBAT
+            </h1>
+            <p class="text-xs sm:text-sm text-[#eadfd3] mt-1.5 font-medium max-w-2xl">
+              Visualisasi hasil evaluasi pembiasaan harian siswa berbasis blok interaktif dengan palet warna ramah mata.
+            </p>
+          </div>
+        </div>
+
+        <!-- Badge Status Server -->
+        <div class="bg-[#634a35] border-2 border-[#4e3928] px-4 py-2.5 shrink-0 self-end md:self-center">
+          <div class="flex items-center gap-2 text-xs font-bold text-[#f5ebe0]">
+            <span class="w-2.5 h-2.5 bg-[#52b788] border border-[#1b4332] inline-block animate-pulse"></span>
+            <span>DATA TERVERIFIKASI</span>
+          </div>
+          <p class="text-[11px] text-[#dfd1c3] mt-0.5">9 Indikator Utama • 76 Siswa</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         2. EMPAT KARTU KPI (GAYA INVENTORY SLOT ABU-ABU LEMBUT)
+         ==================================================================== -->
+    <section aria-label="Ringkasan KPI" class="animate-drop" style="animation-delay: 0.08s;">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <!-- KPI 1: Total Responden -->
+        <div class="mc-slot-card p-4 flex flex-col justify-between text-[#1f2937]">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#52525b]">Total Responden</span>
+              <h2 class="font-mc-title text-lg sm:text-xl text-[#18181b] mt-2">76 Siswa</h2>
+            </div>
+            <div class="bg-[#52b788]/25 border-2 border-[#52b788] p-2.5 text-[#1b4332]">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mc-inset-box px-2.5 py-1.5 mt-4 flex items-center justify-between text-xs font-semibold text-[#3f3f46]">
+            <span>Partisipasi</span>
+            <span class="text-[#1b4332] font-bold">100% Valid</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Kebiasaan Terbaik -->
+        <div class="mc-slot-card p-4 flex flex-col justify-between text-[#1f2937]">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#52525b]">Kebiasaan Terbaik</span>
+              <h2 class="font-mc-title text-lg sm:text-xl text-[#1b4332] mt-2">85.5%</h2>
+            </div>
+            <div class="bg-[#52b788]/30 border-2 border-[#52b788] p-2.5 text-[#1b4332]">
+              <i data-lucide="award" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mc-inset-box px-2.5 py-1.5 mt-4 flex items-center justify-between text-xs font-semibold text-[#3f3f46]">
+            <span>Ibadah Wajib</span>
+            <span class="text-[#1b4332] font-bold">65/76 Siswa</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Perlu Perhatian -->
+        <div class="mc-slot-card p-4 flex flex-col justify-between text-[#1f2937]">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#52525b]">Perlu Perhatian</span>
+              <h2 class="font-mc-title text-lg sm:text-xl text-[#9a3412] mt-2">18.4%</h2>
+            </div>
+            <div class="bg-[#e07a5f]/25 border-2 border-[#e07a5f] p-2.5 text-[#7f1d1d]">
+              <i data-lucide="alert-circle" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mc-inset-box px-2.5 py-1.5 mt-4 flex items-center justify-between text-xs font-semibold text-[#3f3f46]">
+            <span>Diet Sehat</span>
+            <span class="text-[#9a3412] font-bold">14/76 Rutin</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Rata-rata Rutin -->
+        <div class="mc-slot-card p-4 flex flex-col justify-between text-[#1f2937]">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-[#52525b]">Rata-rata Rutin</span>
+              <h2 class="font-mc-title text-lg sm:text-xl text-[#854d0e] mt-2">47.7%</h2>
+            </div>
+            <div class="bg-[#f4c430]/35 border-2 border-[#d4a017] p-2.5 text-[#78350f]">
+              <i data-lucide="trending-up" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mc-inset-box px-2.5 py-1.5 mt-4 flex items-center justify-between text-xs font-semibold text-[#3f3f46]">
+            <span>Kadang: 46.9%</span>
+            <span class="text-[#52525b] font-bold">Tdk: 5.4%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         3. AREA DIAGRAM UTAMA (LATAR KERTAS PERKAMEN SOFT #f3efe6)
+         ==================================================================== -->
+    <section class="mc-parchment-panel p-4 sm:p-6 text-[#27272a] animate-drop" style="animation-delay: 0.16s;">
+      <!-- Header Panel Diagram + Tab Switcher -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b-2 border-[#dcd6c8] pb-4 mb-6">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <span class="w-3.5 h-3.5 bg-[#52b788] border-2 border-[#27272a] inline-block"></span>
+            <h2 id="chart-title" class="font-mc-title text-xs sm:text-sm text-[#18181b]">
+              GRAFIK DISTRIBUSI 9 INDIKATOR KEBIASAAN
+            </h2>
+          </div>
+          <p id="chart-subtitle" class="text-xs sm:text-sm text-[#57534e] mt-1.5 font-medium">
+            Perbandingan persentase Setiap Hari, Kadang-kadang, dan Tidak Pernah dari 76 responden.
+          </p>
+        </div>
+
+        <!-- Tombol Tab Switcher bergaya Minecraft -->
+        <div class="flex items-center gap-2 self-start md:self-center">
+          <button
+            id="btn-tab-chart"
+            onclick="switchTab('chart')"
+            class="mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#52b788] text-[#143326]"
+          >
+            <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+            <span>9 Indikator</span>
+          </button>
+          <button
+            id="btn-tab-trend"
+            onclick="switchTab('trend')"
+            class="mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#d4d4d8] text-[#3f3f46] hover:bg-[#e4e4e7]"
+          >
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span>Tren 30 Okt - 09 Nov</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Konten Grafik 1: 9 Indikator Stacked Bar -->
+      <div id="view-chart" class="w-full">
+        <div class="relative h-[380px] sm:h-[420px] w-full">
+          <canvas id="indicatorsBarChart"></canvas>
+        </div>
+        <div class="mt-4 pt-3 border-t-2 border-[#dcd6c8] flex flex-wrap items-center justify-between gap-3 text-xs text-[#44403c] font-semibold">
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-[#5a824f] shrink-0"></i>
+            <span>Arahkan kursor / ketuk batang diagram untuk melihat rincian jumlah siswa per kategori.</span>
+          </div>
+          <span class="bg-[#e7e2d5] px-2.5 py-1 border border-[#c7bfb0] text-[#27272a]">
+            Skala: 100% Stacked Block
+          </span>
+        </div>
+      </div>
+
+      <!-- Konten Grafik 2: Tren Harian Line Chart -->
+      <div id="view-trend" class="w-full hidden">
+        <div class="relative h-[380px] sm:h-[420px] w-full">
+          <canvas id="dailyTrendChart"></canvas>
+        </div>
+        <div class="mt-4 pt-3 border-t-2 border-[#dcd6c8] grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-semibold text-[#27272a]">
+          <div class="bg-[#e7e2d5] p-2.5 border border-[#c7bfb0]">
+            <span class="text-[#57534e] block">Puncak Pengisian:</span>
+            <span class="font-bold text-sm">03 Nov 2026 (11 siswa masuk)</span>
+          </div>
+          <div class="bg-[#e7e2d5] p-2.5 border border-[#c7bfb0]">
+            <span class="text-[#57534e] block">Stabilitas Kebiasaan Rutin:</span>
+            <span class="font-bold text-sm text-[#1b4332]">Stabil di kisaran 46% – 49%</span>
+          </div>
+          <div class="bg-[#e7e2d5] p-2.5 border border-[#c7bfb0]">
+            <span class="text-[#57534e] block">Total Akumulasi Akhir:</span>
+            <span class="font-bold text-sm">76 Siswa (09 Nov 2026)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         4. INVENTORY KEBIASAAN (9 KARTU DETAIL + FILTER + SEARCH)
+         ==================================================================== -->
+    <section class="space-y-4 animate-drop" style="animation-delay: 0.24s;">
+      <!-- Control Bar Inventory -->
+      <div class="mc-slot-card hover:transform-none p-4 text-[#1f2937] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="filter" class="w-4 h-4 text-[#27272a]"></i>
+            <h2 class="font-mc-title text-xs sm:text-sm text-[#18181b]">
+              INVENTORY KEBIASAAN (9 SLOT DATA)
+            </h2>
+          </div>
+          <p class="text-xs text-[#3f3f46] font-medium mt-1">
+            Klik salah satu kartu slot di bawah untuk membuka meja analisis & rekomendasi perbaikan kebiasaan.
+          </p>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <!-- Pencarian -->
+          <div class="mc-inset-box px-3 py-1.5 flex items-center gap-2">
+            <i data-lucide="search" class="w-4 h-4 text-[#52525b]"></i>
+            <input
+              type="text"
+              id="search-input"
+              oninput="handleSearch(this.value)"
+              placeholder="Cari indikator..."
+              class="bg-transparent text-xs font-semibold text-[#18181b] placeholder-[#71717a] focus:outline-none w-full sm:w-40"
+            />
+            <button
+              id="btn-clear-search"
+              onclick="clearSearch()"
+              class="hidden text-[#52525b] hover:text-[#18181b] cursor-pointer"
+              aria-label="Hapus pencarian"
+            >
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+          <!-- Tombol Filter Status -->
+          <div id="filter-buttons" class="flex flex-wrap items-center gap-1.5">
+            <button data-status="ALL" onclick="setFilter('ALL')" class="filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#5a824f] text-white">
+              Semua (9)
+            </button>
+            <button data-status="MASTERED" onclick="setFilter('MASTERED')" class="filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#e4e4e7] text-[#27272a] hover:bg-[#f4f4f5]">
+              Mastered (4)
+            </button>
+            <button data-status="GRINDING" onclick="setFilter('GRINDING')" class="filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#e4e4e7] text-[#27272a] hover:bg-[#f4f4f5]">
+              Grinding (3)
+            </button>
+            <button data-status="WARNING" onclick="setFilter('WARNING')" class="filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#e4e4e7] text-[#27272a] hover:bg-[#f4f4f5]">
+              Warning (2)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Kartu Inventory -->
+      <div id="inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5"></div>
+      
+      <!-- State Kosong saat pencarian tidak ditemukan -->
+      <div id="empty-state" class="hidden mc-parchment-panel p-8 text-center text-[#3f3f46]">
+        <p class="font-mc-title text-xs text-[#27272a]">SLOT KOSONG</p>
+        <p class="text-sm mt-2">Tidak ada indikator kebiasaan yang cocok dengan filter pencarian Anda.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ======================================================================
+       5. MODAL DETAIL CRAFTING TABLE (SAAT KARTU DIKLIK)
+       ====================================================================== -->
+  <div
+    id="detail-modal"
+    onclick="closeModal()"
+    class="hidden fixed inset-0 z-50 bg-[#18181b]/75 backdrop-blur-xs flex items-center justify-center p-4"
+  >
+    <div
+      onclick="event.stopPropagation()"
+      class="mc-parchment-panel max-w-xl w-full p-5 sm:p-6 text-[#27272a] relative max-h-[90vh] overflow-y-auto"
+    >
+      <!-- Header Modal -->
+      <div class="flex items-start justify-between gap-4 border-b-2 border-[#d6d0c4] pb-4">
+        <div class="flex items-center gap-3.5">
+          <div id="modal-icon-box" class="mc-slot-card hover:transform-none p-3 text-[#18181b]"></div>
+          <div>
+            <span id="modal-category" class="text-xs font-bold text-[#57534e]"></span>
+            <h3 id="modal-title" class="font-mc-title text-sm sm:text-base text-[#18181b] mt-1"></h3>
+          </div>
+        </div>
+
+        <button
+          onclick="closeModal()"
+          class="mc-btn bg-[#e07a5f] text-white p-2 cursor-pointer"
+          aria-label="Tutup detail"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Isi Modal -->
+      <div class="space-y-4 mt-4">
+        <!-- Pertanyaan Survei -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-[#57534e] mb-1.5">
+            Pertanyaan Survei Asli:
+          </h4>
+          <div id="modal-question" class="bg-[#e7e2d5] border-2 border-[#c7bfb0] p-3 text-sm font-semibold text-[#18181b]"></div>
+        </div>
+
+        <!-- Tabel Rincian 76 Responden -->
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-[#57534e] mb-1.5">
+            Distribusi Jawaban (Total 76 Responden):
+          </h4>
+          <div class="grid grid-cols-3 gap-2.5 text-center">
+            <div class="bg-[#d8f3dc] border-2 border-[#52b788] p-3">
+              <span class="text-xs font-bold text-[#1b4332] block">Setiap Hari</span>
+              <span id="modal-everyday-count" class="font-mc-title text-sm text-[#143326] block my-1"></span>
+              <span id="modal-everyday-pct" class="text-xs font-bold text-[#1b4332]"></span>
+            </div>
+
+            <div class="bg-[#fef3c7] border-2 border-[#f4c430] p-3">
+              <span class="text-xs font-bold text-[#78350f] block">Kadang-kadang</span>
+              <span id="modal-sometimes-count" class="font-mc-title text-sm text-[#451a03] block my-1"></span>
+              <span id="modal-sometimes-pct" class="text-xs font-bold text-[#78350f]"></span>
+            </div>
+
+            <div class="bg-[#fde2db] border-2 border-[#e07a5f] p-3">
+              <span class="text-xs font-bold text-[#7f1d1d] block">Tidak Pernah</span>
+              <span id="modal-never-count" class="font-mc-title text-sm text-[#450a0a] block my-1"></span>
+              <span id="modal-never-pct" class="text-xs font-bold text-[#7f1d1d]"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wawasan Analitik -->
+        <div class="bg-[#eae6dc] border-l-4 border-[#5a824f] p-3.5">
+          <div class="flex items-center gap-2 text-xs font-extrabold text-[#2d4427] mb-1">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span>WAWASAN EVALUASI DATA</span>
+          </div>
+          <p id="modal-insight" class="text-xs sm:text-sm text-[#27272a] leading-relaxed font-medium"></p>
+        </div>
+
+        <!-- Saran Perbaikan Kebiasaan -->
+        <div class="bg-[#e8f3ea] border-l-4 border-[#52b788] p-3.5">
+          <div class="flex items-center gap-2 text-xs font-extrabold text-[#1b4332] mb-1">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span>SARAN AKSI & PEMBIASAAN</span>
+          </div>
+          <p id="modal-recommendation" class="text-xs sm:text-sm text-[#1f2937] leading-relaxed font-medium"></p>
+        </div>
+      </div>
+
+      <!-- Footer Modal -->
+      <div class="mt-5 pt-3 border-t-2 border-[#d6d0c4] flex justify-end">
+        <button
+          onclick="closeModal()"
+          class="mc-btn bg-[#52b788] text-[#143326] px-4 py-2 text-xs font-extrabold cursor-pointer"
+        >
+          Selesai Membaca
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================================
+       JAVASCRIPT LOGIC & CHART INITIALIZATION
+       ====================================================================== -->
+  <script>
+    // Data Lengkap Survei KAIH (76 Responden | Periode 30 Okt - 09 Nov 2026)
+    const SURVEY_INDICATORS = [
+      {
+        id: 1,
+        shortName: 'Bangun Pagi',
+        habitCategory: '1. Bangun Pagi',
+        question: 'Apakah kamu terbiasa bangun pagi tepat waktu tanpa harus dibangunkan berkali-kali?',
+        everyDayCount: 60,
+        sometimesCount: 16,
+        neverCount: 0,
+        everyDayPct: 78.9,
+        sometimesPct: 21.1,
+        neverPct: 0.0,
+        status: 'MASTERED',
+        iconName: 'sun',
+        blockType: 'Gold Sun Block',
+        insight: 'Sebanyak 60 dari 76 siswa (78.9%) sudah memiliki ritme bangun pagi yang mandiri dan konsisten. Nol siswa yang tidak pernah bangun pagi menunjukkan fondasi disiplin waktu yang sangat baik.',
+        recommendation: 'Pertahankan rutinitas tidur sebelum pukul 21.30 WIB agar siklus bangun pagi tetap bugar tanpa rasa kantuk di kelas.'
+      },
+      {
+        id: 2,
+        shortName: 'Ibadah Wajib',
+        habitCategory: '2. Beribadah',
+        question: 'Apakah kamu melaksanakan ibadah wajib tepat waktu setiap hari dengan kesadaran sendiri?',
+        everyDayCount: 65,
+        sometimesCount: 11,
+        neverCount: 0,
+        everyDayPct: 85.5,
+        sometimesPct: 14.5,
+        neverPct: 0.0,
+        status: 'MASTERED',
+        iconName: 'sparkles',
+        blockType: 'Emerald Beacon',
+        insight: 'Kebiasaan dengan capaian tertinggi (85.5% atau 65 siswa). Kesadaran spiritual siswa dalam menjalankan ibadah wajib sangat kuat dan menjadi pilar utama karakter.',
+        recommendation: 'Berikan apresiasi positif dan dorong siswa untuk mulai membiasakan ibadah sunnah serta tadarus/doa bersama keluarga.'
+      },
+      {
+        id: 3,
+        shortName: 'Olahraga',
+        habitCategory: '3. Berolahraga',
+        question: 'Apakah kamu melakukan aktivitas fisik atau olahraga rutin minimal 30 menit setiap hari?',
+        everyDayCount: 19,
+        sometimesCount: 46,
+        neverCount: 11,
+        everyDayPct: 25.0,
+        sometimesPct: 60.5,
+        neverPct: 14.5,
+        status: 'GRINDING',
+        iconName: 'dumbbell',
+        blockType: 'Iron Boots',
+        insight: 'Mayoritas siswa (60.5% / 46 siswa) masih berolahraga secara kondisional (saat jam PJOK atau akhir pekan), sementara 14.5% (11 siswa) belum rutin bergerak.',
+        recommendation: 'Terapkan tantangan peregangan 10 menit sebelum belajar dan jalan kaki santai atau bersepeda ringan di sore hari.'
+      },
+      {
+        id: 4,
+        shortName: 'Diet Sehat',
+        habitCategory: '4. Makan Sehat & Bergizi',
+        question: 'Apakah kamu mengonsumsi makanan bergizi seimbang (sayur, buah, protein) dan mengurangi jajanan instan?',
+        everyDayCount: 14,
+        sometimesCount: 59,
+        neverCount: 3,
+        everyDayPct: 18.4,
+        sometimesPct: 77.6,
+        neverPct: 3.9,
+        status: 'WARNING',
+        iconName: 'apple',
+        blockType: 'Golden Apple',
+        insight: 'Menjadi indikator dengan konsistensi harian terendah (18.4% / 14 siswa). Sebanyak 77.6% (59 siswa) masih kadang-kadang mengonsumsi gizi seimbang karena tergoda jajanan kemasan.',
+        recommendation: 'Galakkan program "Bekal Sehatku" dari rumah dan edukasi pengurangan minuman berpemanis dalam kemasan di lingkungan sekolah.'
+      },
+      {
+        id: 5,
+        shortName: 'Membaca',
+        habitCategory: '5. Gemar Belajar',
+        question: 'Apakah kamu meluangkan waktu untuk membaca buku (non-pelajaran/pengetahuan umum) setiap hari?',
+        everyDayCount: 20,
+        sometimesCount: 54,
+        neverCount: 2,
+        everyDayPct: 26.3,
+        sometimesPct: 71.1,
+        neverPct: 2.6,
+        status: 'GRINDING',
+        iconName: 'book-open',
+        blockType: 'Enchanted Book',
+        insight: 'Sebanyak 71.1% (54 siswa) sudah memiliki minat baca namun belum menjadikannya jadwal harian yang tetap; hanya 26.3% (20 siswa) yang membaca setiap hari.',
+        recommendation: 'Sediakan pojok baca tematik dan terapkan gerakan 15 menit membaca bebas sebelum jam pelajaran pertama dimulai.'
+      },
+      {
+        id: 6,
+        shortName: 'Jadwal Belajar',
+        habitCategory: '5. Gemar Belajar',
+        question: 'Apakah kamu memiliki dan mematuhi jadwal belajar mandiri di rumah setiap hari?',
+        everyDayCount: 22,
+        sometimesCount: 46,
+        neverCount: 8,
+        everyDayPct: 28.9,
+        sometimesPct: 60.5,
+        neverPct: 10.5,
+        status: 'GRINDING',
+        iconName: 'clock',
+        blockType: 'Redstone Clock',
+        insight: 'Hanya 28.9% (22 siswa) yang disiplin mengikuti jadwal belajar mandiri, sedangkan 10.5% (8 siswa) belum memiliki jadwal belajar terstruktur di rumah.',
+        recommendation: 'Bantu siswa menyusun jadwal belajar teknik Pomodoro (25 menit fokus, 5 menit istirahat) bersama orang tua di rumah.'
+      },
+      {
+        id: 7,
+        shortName: 'Menyapa',
+        habitCategory: '6. Bermasyarakat',
+        question: 'Apakah kamu terbiasa menerapkan 5S (Senyum, Salam, Sapa, Sopan, Santun) kepada guru, teman, dan tetangga?',
+        everyDayCount: 57,
+        sometimesCount: 19,
+        neverCount: 0,
+        everyDayPct: 75.0,
+        sometimesPct: 25.0,
+        neverPct: 0.0,
+        status: 'MASTERED',
+        iconName: 'message-circle-heart',
+        blockType: 'Heart Crystal',
+        insight: 'Sebanyak 75.0% (57 siswa) mempraktikkan budaya sapa dan sopan santun setiap hari, dan 0% yang tidak pernah. Interaksi sosial siswa tergolong sangat hangat.',
+        recommendation: 'Jadikan duta siswa ramah di gerbang sekolah setiap pagi untuk menularkan kebiasaan menyapa kepada 25% siswa lainnya.'
+      },
+      {
+        id: 8,
+        shortName: 'Bantu Keluarga',
+        habitCategory: '6. Bermasyarakat',
+        question: 'Apakah kamu aktif membantu pekerjaan rumah tangga dan meringankan tugas orang tua setiap hari?',
+        everyDayCount: 52,
+        sometimesCount: 23,
+        neverCount: 1,
+        everyDayPct: 68.4,
+        sometimesPct: 30.3,
+        neverPct: 1.3,
+        status: 'MASTERED',
+        iconName: 'heart-handshake',
+        blockType: 'Oak Crafting Table',
+        insight: 'Tingkat kepedulian keluarga sangat tinggi: 68.4% (52 siswa) rutin membantu orang tua setiap hari seperti merapikan tempat tidur dan mencuci piring sendiri.',
+        recommendation: 'Buat jurnal "Misi Bakti Rumah" mingguan dengan tugas sederhana yang disesuaikan dengan usia siswa.'
+      },
+      {
+        id: 9,
+        shortName: 'Stop Gadget',
+        habitCategory: '7. Tidur Cepat',
+        question: 'Apakah kamu berhenti menggunakan gadget/HP minimal 1 jam sebelum tidur agar bisa tidur cepat dan berkualitas?',
+        everyDayCount: 17,
+        sometimesCount: 47,
+        neverCount: 12,
+        everyDayPct: 22.4,
+        sometimesPct: 61.8,
+        neverPct: 15.8,
+        status: 'WARNING',
+        iconName: 'moon',
+        blockType: 'Obsidian Shield',
+        insight: 'Tantangan terbesar kedua: 15.8% (12 siswa) tidak pernah lepas dari gadget sebelum tidur, dan hanya 22.4% (17 siswa) yang konsisten melakukan detoks layar malam hari.',
+        recommendation: 'Terapkan aturan "Parkir Gadget" di ruang keluarga mulai pukul 20.30 WIB agar siswa dapat tidur lebih cepat dan nyenyak.'
+      }
+    ];
+
+    const DAILY_TREND_DATA = [
+      { date: '30 Okt', kumulatif: 6, skorRutin: 44.2, skorKadang: 49.5 },
+      { date: '31 Okt', kumulatif: 14, skorRutin: 45.8, skorKadang: 48.1 },
+      { date: '01 Nov', kumulatif: 19, skorRutin: 43.5, skorKadang: 50.2 },
+      { date: '02 Nov', kumulatif: 28, skorRutin: 46.9, skorKadang: 47.4 },
+      { date: '03 Nov', kumulatif: 39, skorRutin: 48.1, skorKadang: 46.5 },
+      { date: '04 Nov', kumulatif: 47, skorRutin: 47.4, skorKadang: 47.0 },
+      { date: '05 Nov', kumulatif: 54, skorRutin: 48.9, skorKadang: 45.8 },
+      { date: '06 Nov', kumulatif: 60, skorRutin: 47.2, skorKadang: 47.3 },
+      { date: '07 Nov', kumulatif: 65, skorRutin: 46.5, skorKadang: 48.0 },
+      { date: '08 Nov', kumulatif: 71, skorRutin: 48.3, skorKadang: 46.4 },
+      { date: '09 Nov', kumulatif: 76, skorRutin: 47.7, skorKadang: 46.9 }
+    ];
+
+    // State Aplikasi
+    let currentFilter = 'ALL';
+    let currentSearch = '';
+    let barChartInstance = null;
+    let trendChartInstance = null;
+
+    // Helper Style Badge Status
+    function getStatusBadge(status) {
+      if (status === 'MASTERED') {
+        return { bg: 'bg-[#d8f3dc]', border: 'border-[#52b788]', text: 'text-[#1b4332]', label: 'MASTERED' };
+      }
+      if (status === 'GRINDING') {
+        return { bg: 'bg-[#fef3c7]', border: 'border-[#f4c430]', text: 'text-[#78350f]', label: 'GRINDING' };
+      }
+      return { bg: 'bg-[#fde2db]', border: 'border-[#e07a5f]', text: 'text-[#7f1d1d]', label: 'WARNING' };
+    }
+
+    // Render Kartu Inventory
+    function renderInventory() {
+      const grid = document.getElementById('inventory-grid');
+      const emptyState = document.getElementById('empty-state');
+
+      const filtered = SURVEY_INDICATORS.filter(item => {
+        const matchStatus = currentFilter === 'ALL' || item.status === currentFilter;
+        const q = currentSearch.toLowerCase();
+        const matchQuery =
+          item.shortName.toLowerCase().includes(q) ||
+          item.habitCategory.toLowerCase().includes(q) ||
+          item.question.toLowerCase().includes(q);
+        return matchStatus && matchQuery;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = filtered.map(item => {
+        const badge = getStatusBadge(item.status);
+        return `
+          <div
+            onclick="openModal(${item.id})"
+            class="mc-slot-card p-4 text-[#1f2937] cursor-pointer flex flex-col justify-between group hover:bg-[#dedee2]"
+          >
+            <div>
+              <!-- Bagian Atas Kartu -->
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="bg-[#f3efe6] border-2 border-[#71717a] p-2.5 text-[#27272a] group-hover:scale-105 transition-transform">
+                    <i data-lucide="${item.iconName}" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <span class="text-[11px] font-bold text-[#52525b] block">${item.habitCategory}</span>
+                    <h3 class="font-mc-title text-xs text-[#18181b] mt-1">${item.shortName}</h3>
+                  </div>
+                </div>
+                <span class="text-[10px] font-extrabold px-2 py-1 border-2 ${badge.bg} ${badge.border} ${badge.text} shrink-0">
+                  ${badge.label}
+                </span>
+              </div>
+
+              <!-- Pertanyaan Survei -->
+              <div class="bg-[#f3efe6] border-2 border-[#a1a1aa] p-2.5 mb-3">
+                <p class="text-xs text-[#27272a] font-medium leading-relaxed">
+                  “${item.question}”
+                </p>
+              </div>
+            </div>
+
+            <!-- Rincian Siswa & Mini Progress -->
+            <div class="space-y-2.5 pt-1">
+              <div class="w-full h-3.5 bg-[#a1a1aa] border-2 border-[#52525b] flex overflow-hidden">
+                <div style="width: ${item.everyDayPct}%" class="bg-[#52b788] h-full" title="Setiap Hari: ${item.everyDayPct}%"></div>
+                <div style="width: ${item.sometimesPct}%" class="bg-[#f4c430] h-full" title="Kadang-kadang: ${item.sometimesPct}%"></div>
+                <div style="width: ${item.neverPct}%" class="bg-[#e07a5f] h-full" title="Tidak Pernah: ${item.neverPct}%"></div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-1.5 text-center text-[11px] font-bold">
+                <div class="bg-[#d8f3dc] border border-[#52b788] py-1 px-1 text-[#1b4332]">
+                  <span class="block text-[10px] font-semibold">Setiap Hari</span>
+                  <span>${item.everyDayCount} (${item.everyDayPct}%)</span>
+                </div>
+                <div class="bg-[#fef3c7] border border-[#f4c430] py-1 px-1 text-[#78350f]">
+                  <span class="block text-[10px] font-semibold">Kadang</span>
+                  <span>${item.sometimesCount} (${item.sometimesPct}%)</span>
+                </div>
+                <div class="bg-[#fde2db] border border-[#e07a5f] py-1 px-1 text-[#7f1d1d]">
+                  <span class="block text-[10px] font-semibold">Tdk Pernah</span>
+                  <span>${item.neverCount} (${item.neverPct}%)</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] font-bold text-[#3f3f46] pt-1 border-t border-[#a1a1aa]">
+                <span>Item: ${item.blockType}</span>
+                <span class="text-[#1b4332] group-hover:underline">Lihat Analisis →</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // Filter & Search Handlers
+    function setFilter(status) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.status === status) {
+          btn.className = 'filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#5a824f] text-white';
+        } else {
+          btn.className = 'filter-btn mc-btn px-2.5 py-1.5 text-xs font-bold cursor-pointer bg-[#e4e4e7] text-[#27272a] hover:bg-[#f4f4f5]';
+        }
+      });
+      renderInventory();
+    }
+
+    function handleSearch(value) {
+      currentSearch = value;
+      const clearBtn = document.getElementById('btn-clear-search');
+      if (value.trim().length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderInventory();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('search-input');
+      input.value = '';
+      handleSearch('');
+    }
+
+    // Tab Switcher Diagram
+    function switchTab(tab) {
+      const viewChart = document.getElementById('view-chart');
+      const viewTrend = document.getElementById('view-trend');
+      const btnChart = document.getElementById('btn-tab-chart');
+      const btnTrend = document.getElementById('btn-tab-trend');
+      const title = document.getElementById('chart-title');
+      const subtitle = document.getElementById('chart-subtitle');
+
+      if (tab === 'chart') {
+        viewChart.classList.remove('hidden');
+        viewTrend.classList.add('hidden');
+        btnChart.className = 'mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#52b788] text-[#143326]';
+        btnTrend.className = 'mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#d4d4d8] text-[#3f3f46] hover:bg-[#e4e4e7]';
+        title.textContent = 'GRAFIK DISTRIBUSI 9 INDIKATOR KEBIASAAN';
+        subtitle.textContent = 'Perbandingan persentase Setiap Hari, Kadang-kadang, dan Tidak Pernah dari 76 responden.';
+      } else {
+        viewChart.classList.add('hidden');
+        viewTrend.classList.remove('hidden');
+        btnChart.className = 'mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#d4d4d8] text-[#3f3f46] hover:bg-[#e4e4e7]';
+        btnTrend.className = 'mc-btn px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer bg-[#f4c430] text-[#422006]';
+        title.textContent = 'TREN PARTISIPASI & KONSISTENSI HARIAN';
+        subtitle.textContent = 'Perkembangan masuknya data survei & rata-rata skor kebiasaan dari 30 Okt hingga 09 Nov 2026.';
+        if (!trendChartInstance) {
+          initTrendChart();
+        }
+      }
+    }
+
+    // Modal Detail Handlers
+    function openModal(id) {
+      const item = SURVEY_INDICATORS.find(d => d.id === id);
+      if (!item) return;
+
+      document.getElementById('modal-icon-box').innerHTML = `<i data-lucide="${item.iconName}" class="w-6 h-6"></i>`;
+      document.getElementById('modal-category').textContent = `${item.habitCategory} • ${item.blockType}`;
+      document.getElementById('modal-title').textContent = item.shortName;
+      document.getElementById('modal-question').textContent = `“${item.question}”`;
+      
+      document.getElementById('modal-everyday-count').textContent = item.everyDayCount;
+      document.getElementById('modal-everyday-pct').textContent = `(${item.everyDayPct}%)`;
+      
+      document.getElementById('modal-sometimes-count').textContent = item.sometimesCount;
+      document.getElementById('modal-sometimes-pct').textContent = `(${item.sometimesPct}%)`;
+      
+      document.getElementById('modal-never-count').textContent = item.neverCount;
+      document.getElementById('modal-never-pct').textContent = `(${item.neverPct}%)`;
+
+      document.getElementById('modal-insight').textContent = item.insight;
+      document.getElementById('modal-recommendation').textContent = item.recommendation;
+
+      document.getElementById('detail-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeModal() {
+      document.getElementById('detail-modal').classList.add('hidden');
+    }
+
+    // Inisialisasi Grafik 1: Stacked Bar Chart (Chart.js)
+    function initBarChart() {
+      const ctx = document.getElementById('indicatorsBarChart').getContext('2d');
+      barChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: SURVEY_INDICATORS.map(d => d.shortName),
+          datasets: [
+            {
+              label: 'Setiap Hari (Rutin)',
+              data: SURVEY_INDICATORS.map(d => d.everyDayPct),
+              backgroundColor: '#52b788',
+              borderColor: '#27272a',
+              borderWidth: 2,
+              counts: SURVEY_INDICATORS.map(d => d.everyDayCount)
+            },
+            {
+              label: 'Kadang-kadang',
+              data: SURVEY_INDICATORS.map(d => d.sometimesPct),
+              backgroundColor: '#f4c430',
+              borderColor: '#27272a',
+              borderWidth: 2,
+              counts: SURVEY_INDICATORS.map(d => d.sometimesCount)
+            },
+            {
+              label: 'Tidak Pernah',
+              data: SURVEY_INDICATORS.map(d => d.neverPct),
+              backgroundColor: '#e07a5f',
+              borderColor: '#27272a',
+              borderWidth: 2,
+              counts: SURVEY_INDICATORS.map(d => d.neverCount)
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '700' },
+                boxWidth: 16,
+                boxHeight: 16,
+                padding: 18
+              }
+            },
+            tooltip: {
+              backgroundColor: '#f7f4ec',
+              titleColor: '#18181b',
+              bodyColor: '#27272a',
+              borderColor: '#57534e',
+              borderWidth: 3,
+              padding: 12,
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '800' },
+              bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '600' },
+              callbacks: {
+                afterTitle: function(context) {
+                  const idx = context[0].dataIndex;
+                  return SURVEY_INDICATORS[idx].habitCategory;
+                },
+                label: function(context) {
+                  const count = context.dataset.counts[context.dataIndex];
+                  return ` ${context.dataset.label}: ${context.parsed.y}% (${count} siswa)`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              grid: { display: false },
+              border: { color: '#27272a', width: 2 },
+              ticks: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' }
+              }
+            },
+            y: {
+              stacked: true,
+              min: 0,
+              max: 100,
+              border: { color: '#27272a', width: 2 },
+              grid: { color: '#d6d0c4', tickBorderDash: [4, 4] },
+              ticks: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' },
+                callback: value => value + '%'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Inisialisasi Grafik 2: Tren Harian Line Chart
+    function initTrendChart() {
+      const ctx = document.getElementById('dailyTrendChart').getContext('2d');
+      trendChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: DAILY_TREND_DATA.map(d => d.date),
+          datasets: [
+            {
+              label: 'Indeks Setiap Hari (%)',
+              data: DAILY_TREND_DATA.map(d => d.skorRutin),
+              borderColor: '#52b788',
+              backgroundColor: '#52b788',
+              borderWidth: 3.5,
+              pointRadius: 5,
+              pointBorderColor: '#27272a',
+              pointBorderWidth: 2,
+              tension: 0.3,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Indeks Kadang-kadang (%)',
+              data: DAILY_TREND_DATA.map(d => d.skorKadang),
+              borderColor: '#f4c430',
+              backgroundColor: '#f4c430',
+              borderWidth: 3.5,
+              pointRadius: 5,
+              pointBorderColor: '#27272a',
+              pointBorderWidth: 2,
+              tension: 0.3,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Kumulatif Responden (Siswa)',
+              data: DAILY_TREND_DATA.map(d => d.kumulatif),
+              borderColor: '#64748b',
+              backgroundColor: '#64748b',
+              borderWidth: 2.5,
+              borderDash: [5, 5],
+              pointRadius: 4,
+              pointBorderColor: '#27272a',
+              pointBorderWidth: 1.5,
+              stepped: true,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '700' },
+                boxWidth: 16,
+                boxHeight: 16,
+                padding: 18
+              }
+            },
+            tooltip: {
+              backgroundColor: '#f7f4ec',
+              titleColor: '#18181b',
+              bodyColor: '#27272a',
+              borderColor: '#57534e',
+              borderWidth: 3,
+              padding: 12,
+              titleFont: { family: "'Plus Jakarta Sans', sans-serif", size: 13, weight: '800' },
+              bodyFont: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '600' },
+              callbacks: {
+                title: ctx => `Tanggal: ${ctx[0].label} 2026`,
+                label: ctx => {
+                  const suffix = ctx.dataset.yAxisID === 'y' ? '%' : ' siswa';
+                  return ` ${ctx.dataset.label}: ${ctx.parsed.y}${suffix}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              border: { color: '#27272a', width: 2 },
+              ticks: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' }
+              }
+            },
+            y: {
+              type: 'linear',
+              position: 'left',
+              min: 0,
+              max: 100,
+              border: { color: '#27272a', width: 2 },
+              grid: { color: '#d6d0c4' },
+              ticks: {
+                color: '#27272a',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' },
+                callback: v => v + '%'
+              }
+            },
+            y1: {
+              type: 'linear',
+              position: 'right',
+              min: 0,
+              max: 80,
+              border: { color: '#57534e', width: 2 },
+              grid: { drawOnChartArea: false },
+              ticks: {
+                color: '#57534e',
+                font: { family: "'Plus Jakarta Sans', sans-serif", size: 12, weight: '700' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Jalankan saat halaman selesai dimuat
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initBarChart();
+      renderInventory();
+    });
+  </script>
+</body>
+</html>
